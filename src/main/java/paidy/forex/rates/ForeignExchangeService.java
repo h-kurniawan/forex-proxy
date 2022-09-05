@@ -2,6 +2,8 @@ package paidy.forex.rates;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 public interface ForeignExchangeService {
-    List<ExchangeRate> getRates();
+    ResponseEntity<List<ExchangeRate>> getRates(List<String> currencyPairs);
 }
