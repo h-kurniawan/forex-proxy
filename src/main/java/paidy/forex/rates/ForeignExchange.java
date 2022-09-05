@@ -2,7 +2,6 @@ package paidy.forex.rates;
 
 import java.util.List;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -17,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import paidy.forex.configuration.ForexConfiguration;
 
 @Service
-@ConfigurationProperties("service.forex")
 public class ForeignExchange implements ForeignExchangeService {
     private final RestTemplate restTemplate;
     private final ForexConfiguration forexConfig;
@@ -40,7 +38,7 @@ public class ForeignExchange implements ForeignExchangeService {
 
         var headers = new HttpHeaders();
         headers.add("token", forexConfig.getAccessToken());
-        var httpEntity = new HttpEntity<>("body", headers);
+        var httpEntity = new HttpEntity<>(headers);
 
         try {
             return restTemplate.exchange(
