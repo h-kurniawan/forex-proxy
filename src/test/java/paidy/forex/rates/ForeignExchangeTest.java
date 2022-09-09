@@ -3,6 +3,9 @@ package paidy.forex.rates;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -11,12 +14,14 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import paidy.forex.configuration.ForexConfiguration;
 
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -138,11 +143,10 @@ public class ForeignExchangeTest {
                 .isEqualTo(List.of(eurJpy, usdJpy));
     }
 
-    @Test
-    public void getRates_Fail() {
+    @ParameterizedTest
+    @MethodSource
+    public void getRates_Fail(Exception exception, HttpStatus httpStatus) {
         // arrange
-        var exception = new HttpServerErrorException(HttpStatus.TOO_MANY_REQUESTS);
-
         doThrow(exception)
                 .when(restTemplate)
                 .exchange(
@@ -157,9 +161,20 @@ public class ForeignExchangeTest {
 
         // assert
         assertThat(response.getStatusCode())
-                .isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
+                .isEqualTo(httpStatus);
         assertThat(response.getBody())
                 .isEqualTo(List.of());
+    }
+
+    private static Stream<Arguments> getRates_Fail() {
+        return Stream.of(
+                Arguments.of(
+                        new HttpServerErrorException(HttpStatus.TOO_MANY_REQUESTS),
+                        HttpStatus.TOO_MANY_REQUESTS),
+                Arguments.of(
+                        new ResourceAccessException("server down"),
+                        HttpStatus.INTERNAL_SERVER_ERROR)
+        );
     }
 
     private HttpEntity setupHeader() {

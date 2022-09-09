@@ -20,9 +20,9 @@ public class ForeignExchange implements ForeignExchangeService {
 
 
     public ForeignExchange(
-        final RestTemplateBuilder builder,
-        ForexConfiguration forexConfig,
-        ForexCache forexCache) {
+            final RestTemplateBuilder builder,
+            ForexConfiguration forexConfig,
+            ForexCache forexCache) {
         this.restTemplate = builder.build();
         this.forexConfig = forexConfig;
         this.forexCache = forexCache;
@@ -31,10 +31,10 @@ public class ForeignExchange implements ForeignExchangeService {
     @Override
     public ResponseEntity<List<ExchangeRate>> getRates(List<String> currencyPairs) {
         var uriBuilder = UriComponentsBuilder
-            .fromHttpUrl(forexConfig.getBaseUri().toString())
-            .path("/rates");
-        currencyPairs.stream().forEach((pair) -> 
-            uriBuilder.queryParam("pair", pair));
+                .fromHttpUrl(forexConfig.getBaseUri().toString())
+                .path("/rates");
+        currencyPairs.stream().forEach((pair) ->
+                uriBuilder.queryParam("pair", pair));
         var uriComponents = uriBuilder.build();
 
         var headers = new HttpHeaders();
@@ -42,21 +42,31 @@ public class ForeignExchange implements ForeignExchangeService {
         var httpEntity = new HttpEntity<>(headers);
 
         try {
-            var response =  restTemplate.exchange(
-                uriComponents.toUriString(),
-                HttpMethod.GET,
-                httpEntity,
-                new ParameterizedTypeReference<List<ExchangeRate>>() {}
+            var response = restTemplate.exchange(
+                    uriComponents.toUriString(),
+                    HttpMethod.GET,
+                    httpEntity,
+                    new ParameterizedTypeReference<List<ExchangeRate>>() {
+                    }
             );
             cacheExchageRates(response.getBody());
 
             return response;
-        } catch (HttpStatusCodeException ex) {
+        } catch (Exception ex) {
             var exchangeRates = getExchangeRateFromCache(currencyPairs);
-            var statusCode = exchangeRates.isEmpty() ? ex.getStatusCode():  HttpStatus.OK;
+            HttpStatus httpStatus;
+            if (!exchangeRates.isEmpty()) {
+                httpStatus = HttpStatus.OK;
+            }
+            else if (ex instanceof HttpStatusCodeException) {
+                httpStatus = ((HttpStatusCodeException)ex).getStatusCode();
+            }
+            else {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
 
             return ResponseEntity
-                    .status(statusCode)
+                    .status(httpStatus)
                     .body(exchangeRates);
         }
     }
@@ -70,7 +80,7 @@ public class ForeignExchange implements ForeignExchangeService {
 
     private List<ExchangeRate> getExchangeRateFromCache(List<String> currencyPairs) {
         var exchangeRates = new ArrayList<ExchangeRate>();
-        for (var pair: currencyPairs) {
+        for (var pair : currencyPairs) {
             var rate = forexCache.<ExchangeRate>get(pair);
             if (rate == null) {
                 return List.of();
@@ -78,6 +88,6 @@ public class ForeignExchange implements ForeignExchangeService {
             exchangeRates.add(rate);
         }
 
-        return  exchangeRates;
+        return exchangeRates;
     }
 }
