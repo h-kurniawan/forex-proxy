@@ -24,15 +24,15 @@ public class ForexCacheTest {
     @Test
     public void shouldExistInCache() {
         var name = "john wick";
-        forexCache.setCache("key", name);
-        var cachedName = forexCache.<String>getCache("key");
+        forexCache.set("key", name);
+        var cachedName = forexCache.<String>get("key");
         assertThat(cachedName).isEqualTo(name);
     }
 
     @Test
     public void shouldNotExistInCache() {
         var name = "john wick";
-        forexCache.setCache("key", name);
-        var cachedName = forexCache.<String>getCache("other-key");
+        forexCache.set("key", name);
+        var cachedName = forexCache.<String>get("other-key");
         assertThat(cachedName).isNull();
     }}

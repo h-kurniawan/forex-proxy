@@ -15,7 +15,7 @@ public class ForexCache {
         this.cache = cacheManager.getCache(cacheName);
     }
 
-    public <T> T getCache(String key) {
+    public <T> T get(String key) {
         var cachedObject = this.cache.get(key);
         if (cachedObject != null)
             return (T)cachedObject.get();
@@ -23,7 +23,7 @@ public class ForexCache {
             return null;
     }
 
-    public void setCache(String key, Object value) {
+    public void set(String key, Object value) {
         this.cache.put(key, value);
     }
 }

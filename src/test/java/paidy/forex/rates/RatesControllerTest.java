@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
-@WebMvcTest
+@WebMvcTest(RatesController.class)
 public class RatesControllerTest {
     @MockBean
     private ForeignExchange forex;
