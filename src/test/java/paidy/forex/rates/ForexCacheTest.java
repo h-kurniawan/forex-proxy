@@ -35,4 +35,5 @@ public class ForexCacheTest {
         forexCache.set("key", name);
         var cachedName = forexCache.<String>get("other-key");
         assertThat(cachedName).isNull();
-    }}
+    }
+}

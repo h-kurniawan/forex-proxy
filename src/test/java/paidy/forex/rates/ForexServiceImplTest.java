@@ -1,5 +1,19 @@
 package paidy.forex.rates;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.net.URI;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,23 +26,20 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+
 import paidy.forex.configuration.ForexConfiguration;
 
-import java.net.URI;
-import java.time.Instant;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
-public class ForeignExchangeTest {
-    private ForeignExchange forex;
+public class ForexServiceImplTest {
+    private ForexService forexService;
     private ForexConfiguration forexConfig;
 
     @Mock
@@ -46,7 +57,7 @@ public class ForeignExchangeTest {
 
         Mockito.when(restTemplateBuilder.build())
                 .thenReturn(restTemplate);
-        forex = new ForeignExchange(restTemplateBuilder, forexConfig, forexCache);
+        forexService = new ForexServiceImpl(restTemplateBuilder, forexConfig, forexCache);
     }
 
     @Test
@@ -69,7 +80,7 @@ public class ForeignExchangeTest {
                 );
 
         // act
-        var response = forex.getRates(currencyPairs);
+        var response = forexService.getRates(currencyPairs);
 
         // assert
         assertThat(response.getStatusCode())
@@ -99,7 +110,7 @@ public class ForeignExchangeTest {
                 );
 
         // act
-        var response = forex.getRates(currencyPairs);
+        var response = forexService.getRates(currencyPairs);
 
         // assert
         assertThat(response.getStatusCode())
@@ -134,7 +145,7 @@ public class ForeignExchangeTest {
                 );
 
         // act
-        var response = forex.getRates(currencyPairs);
+        var response = forexService.getRates(currencyPairs);
 
         // assert
         assertThat(response.getStatusCode())
@@ -157,7 +168,7 @@ public class ForeignExchangeTest {
                 );
 
         // act
-        var response = forex.getRates(List.of("EURJPY"));
+        var response = forexService.getRates(List.of("EURJPY"));
 
         // assert
         assertThat(response.getStatusCode())

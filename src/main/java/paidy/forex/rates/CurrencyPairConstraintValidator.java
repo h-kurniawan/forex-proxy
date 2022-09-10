@@ -1,8 +1,9 @@
 package paidy.forex.rates;
 
+import java.util.List;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.List;
 
 public class CurrencyPairConstraintValidator implements ConstraintValidator<CurrencyPairConstraint, List<String>> {
     @Override

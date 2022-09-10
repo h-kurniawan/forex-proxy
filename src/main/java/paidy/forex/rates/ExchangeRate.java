@@ -12,8 +12,8 @@ public class ExchangeRate {
     private String fromCurrency;
     @JsonProperty("to")
     private String toCurrency;
-    private float bid;
-    private float ask;
-    private float price;
+    private double bid;
+    private double ask;
+    private double price;
     private Instant timeStamp;
 }

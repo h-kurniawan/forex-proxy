@@ -1,25 +1,31 @@
 package paidy.forex.rates;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import lombok.extern.slf4j.Slf4j;
 import paidy.forex.configuration.ForexConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Slf4j
 @Service
-public class ForeignExchange implements ForeignExchangeService {
+public class ForexServiceImpl implements ForexService {
     private final RestTemplate restTemplate;
     private final ForexConfiguration forexConfig;
     private final ForexCache forexCache;
 
-
-    public ForeignExchange(
+    public ForexServiceImpl(
             final RestTemplateBuilder builder,
             ForexConfiguration forexConfig,
             ForexCache forexCache) {
@@ -41,6 +47,9 @@ public class ForeignExchange implements ForeignExchangeService {
         headers.add("token", forexConfig.getAccessToken());
         var httpEntity = new HttpEntity<>(headers);
 
+        log.error("token is: " + forexConfig.getAccessToken());
+
+
         try {
             var response = restTemplate.exchange(
                     uriComponents.toUriString(),
@@ -53,6 +62,10 @@ public class ForeignExchange implements ForeignExchangeService {
 
             return response;
         } catch (Exception ex) {
+
+log.error("oh no exception!!!");
+log.error(ex.getMessage());
+
             var exchangeRates = getExchangeRateFromCache(currencyPairs);
             HttpStatus httpStatus;
             if (!exchangeRates.isEmpty()) {
@@ -89,5 +102,5 @@ public class ForeignExchange implements ForeignExchangeService {
         }
 
         return exchangeRates;
-    }
+    }    
 }

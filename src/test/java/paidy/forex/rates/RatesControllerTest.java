@@ -1,5 +1,13 @@
 package paidy.forex.rates;
 
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,20 +23,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.BDDAssertions.then;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 @ExtendWith(SpringExtension.class)
 @AutoConfigureJsonTesters
 @WebMvcTest(RatesController.class)
 public class RatesControllerTest {
     @MockBean
-    private ForeignExchange forex;
+    private ForexService forexService;
 
     @Autowired
     private MockMvc mvc;
@@ -43,7 +43,7 @@ public class RatesControllerTest {
             new ExchangeRate("USD", "JPY", 0.61F, 0.82F, 0.71F, Instant.parse("2019-01-01T00:00:00.000Z"))
         );
         var expectedResponse = new ResponseEntity<>(rates, HttpStatus.OK);
-        given(forex.getRates(List.of("USDJPY")))
+        given(forexService.getRates(List.of("USDJPY")))
             .willReturn(expectedResponse);
 
         // when
@@ -64,7 +64,7 @@ public class RatesControllerTest {
     public void getRates_Fail(HttpStatus httpStatus, String errorMsg) throws Exception {
         // given
         var expectedResponse = new ResponseEntity<>(List.<ExchangeRate>of(), httpStatus);
-        given(forex.getRates(List.of("USDJPY")))
+        given(forexService.getRates(List.of("USDJPY")))
                 .willReturn(expectedResponse);
 
         // when

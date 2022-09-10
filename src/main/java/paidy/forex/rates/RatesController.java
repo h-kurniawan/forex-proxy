@@ -1,6 +1,7 @@
 package paidy.forex.rates;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,21 +10,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/rates")
 @Validated
 public class RatesController {
-    private final ForeignExchange forex;
+    private final ForexService forexService;
 
     @GetMapping
-    ResponseEntity<List<ExchangeRate>> getRates(
+    public List<ExchangeRate> getRates(
             @RequestParam("pair")
             @CurrencyPairConstraint
             List<String> currencyPairs) {
-        var response = forex.getRates(currencyPairs);
+        var response = forexService.getRates(currencyPairs);
 
         var statusCode = response.getStatusCode();
         if (!statusCode.is2xxSuccessful()) {
@@ -39,6 +40,6 @@ public class RatesController {
             throw new ResponseStatusException(statusCode, errorMsg);
         }
 
-        return response;
+        return response.getBody();
     }
 }
