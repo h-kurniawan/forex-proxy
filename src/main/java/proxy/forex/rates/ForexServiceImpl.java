@@ -15,10 +15,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import lombok.extern.slf4j.Slf4j;
 import proxy.forex.configuration.ForexConfiguration;
 
-@Slf4j
 @Service
 public class ForexServiceImpl implements ForexService {
     private final RestTemplate restTemplate;
@@ -47,9 +45,6 @@ public class ForexServiceImpl implements ForexService {
         headers.add("token", forexConfig.getAccessToken());
         var httpEntity = new HttpEntity<>(headers);
 
-        log.error("token is: " + forexConfig.getAccessToken());
-
-
         try {
             var response = restTemplate.exchange(
                     uriComponents.toUriString(),
@@ -62,10 +57,6 @@ public class ForexServiceImpl implements ForexService {
 
             return response;
         } catch (Exception ex) {
-
-log.error("oh no exception!!!");
-log.error(ex.getMessage());
-
             var exchangeRates = getExchangeRateFromCache(currencyPairs);
             HttpStatus httpStatus;
             if (!exchangeRates.isEmpty()) {
