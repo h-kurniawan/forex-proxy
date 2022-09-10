@@ -1,4 +1,4 @@
-package paidy.forex.rates;
+package proxy.forex.rates;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,4 +1,4 @@
-package paidy.forex.rates;
+package proxy.forex.rates;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import paidy.forex.configuration.ForexConfiguration;
+import proxy.forex.configuration.ForexConfiguration;
 
 @ExtendWith(MockitoExtension.class)
 public class ForexServiceImplTest {

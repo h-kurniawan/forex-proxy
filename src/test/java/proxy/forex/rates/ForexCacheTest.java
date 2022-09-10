@@ -1,4 +1,4 @@
-package paidy.forex.rates;
+package proxy.forex.rates;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

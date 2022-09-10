@@ -1,4 +1,4 @@
-package paidy.forex.rates;
+package proxy.forex.rates;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import lombok.extern.slf4j.Slf4j;
-import paidy.forex.configuration.ForexConfiguration;
+import proxy.forex.configuration.ForexConfiguration;
 
 @Slf4j
 @Service

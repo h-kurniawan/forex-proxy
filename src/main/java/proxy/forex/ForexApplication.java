@@ -1,4 +1,4 @@
-package paidy.forex;
+package proxy.forex;
 
 import java.util.Arrays;
 

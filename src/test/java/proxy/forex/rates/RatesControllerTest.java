@@ -1,4 +1,4 @@
-package paidy.forex.rates;
+package proxy.forex.rates;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.given;

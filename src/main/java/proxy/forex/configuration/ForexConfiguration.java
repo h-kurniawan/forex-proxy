@@ -1,4 +1,4 @@
-package paidy.forex.configuration;
+package proxy.forex.configuration;
 
 import java.net.URI;
 
